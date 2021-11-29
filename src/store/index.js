@@ -41,6 +41,7 @@ export default createStore({
         headers: {
           "Accept-Encoding": "deflate",
           "X-Gismeteo-Token": "56b30cb255.3443075",
+          "Access-Control-Allow-Origin": "*",
         },
         params: {
           latitude: payload.lat,

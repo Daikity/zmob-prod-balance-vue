@@ -12,7 +12,7 @@
         <Map />
       </div>
     </div>
-    <div class="column is-4" v-for="(field, i) in fields" :key="i">
+    <div class="column is-6" v-for="(field, i) in fields" :key="i">
       <div class="card">
         <header class="card-header">
           <div class="card-header-title">
