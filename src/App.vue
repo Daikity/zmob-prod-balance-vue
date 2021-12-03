@@ -74,6 +74,7 @@ export default {
         { url: "FieldGeoSet", params: undefined },
         { url: "OperationSet", params: undefined },
         { url: "MachineSet", params: undefined },
+        { url: "$metadata", params: undefined },
         // { url: "MachineToOperationSet", params: undefined },
       ],
       isTest: true,

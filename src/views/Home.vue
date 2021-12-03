@@ -360,10 +360,10 @@ export default {
     },
     getFields() {
       const aFields = [];
-      this.$store.dispatch("GISMETEO_DATA", {
-        log: 37.8097131729,
-        lat: 51.1826754405,
-      });
+      // this.$store.dispatch("GISMETEO_DATA", {
+      //   log: 37.8097131729,
+      //   lat: 51.1826754405,
+      // });
 
       this.getUniqueListBy(this.CapacityPlanItemSet, "FieldId").forEach(
         (el) => {
