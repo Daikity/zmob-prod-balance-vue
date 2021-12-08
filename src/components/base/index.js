@@ -1,5 +1,6 @@
 import CPI from "../CPI.vue";
 import Map from "../Map.vue";
+import DropDown from "../UI/DropDown.vue";
 import { Calendar, DatePicker } from "v-calendar";
 
 const regCompnents = [
@@ -18,6 +19,10 @@ const regCompnents = [
   {
     name: "DatePicker",
     component: DatePicker,
+  },
+  {
+    name: "DropDown",
+    component: DropDown,
   },
 ];
 

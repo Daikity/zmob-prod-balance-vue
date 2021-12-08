@@ -360,12 +360,40 @@ export default {
     },
     getFields() {
       const aFields = [];
-      // this.$store.dispatch("GISMETEO_DATA", {
-      //   log: 37.8097131729,
-      //   lat: 51.1826754405,
-      // });
+      const operations = [];
+      const fields = [];
+      const dates = [];
+      // получаем id операций
+      let _operations = this.getUniqueListBy(
+        this.CapacityPlanItemSet,
+        "MaterialId"
+      );
+      _operations.forEach((el) => {
+        operations.push(el.MaterialId);
+      });
+      // получаем поля
+      let _fields = this.getUniqueListBy(this.CapacityPlanItemSet, "FieldId");
+      _fields.forEach((el) => {
+        fields.push(el.FieldId);
+      });
+      // получаем используемые даты
+      let _planDates = this.getUniqueListBy(
+        this.CapacityPlanItemSet,
+        "PlanDate"
+      );
 
-      this.getUniqueListBy(this.CapacityPlanItemSet, "FieldId").forEach(
+      _planDates.forEach((el) => {
+        let res = el.PlanDate.replace("/Date(", "").replace(")/", "");
+        let date = new Date(Number(res));
+        // eslint-disable-next-line prettier/prettier
+        dates.push(this.formatDate(date))
+      });
+
+      console.log(dates);
+      console.log(_operations);
+      console.log(_fields);
+
+      this.getUniqueListBy(this.CapacityPlanItemSet, "OperationId").forEach(
         (el) => {
           aFields.push({
             id: el.Id,
@@ -381,6 +409,17 @@ export default {
       );
       this.fields = aFields;
       return aFields;
+    },
+    formatDate(date) {
+      let dd = date.getDate();
+      if (dd < 10) dd = "0" + dd;
+
+      let mm = date.getMonth() + 1;
+      if (mm < 10) mm = "0" + mm;
+
+      let yy = date.getFullYear();
+
+      return dd + "." + mm + "." + yy;
     },
   },
   watch: {

@@ -29,6 +29,7 @@ import {
   faCertificate,
   faCalendarAlt,
   faUserFriends,
+  faObjectGroup,
   faCloudSunRain,
   faMoneyCheckAlt,
   faCloudMoonRain,
@@ -56,6 +57,7 @@ library.add(faBorderAll);
 library.add(faAngleDown);
 library.add(faFolderPlus);
 library.add(faCalculator);
+library.add(faObjectGroup);
 library.add(faUserFriends);
 library.add(faCalendarAlt);
 library.add(faCertificate);
