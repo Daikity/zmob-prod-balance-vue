@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown is-active" :class="getPosition">
     <div class="dropdown-trigger">
-      <div @click="show = !show">
+      <div>
         <slot name="trigger">
           <button
             class="button is-small"
@@ -16,7 +16,7 @@
         </slot>
       </div>
     </div>
-    <div class="dropdown-menu" id="dropdown-menu6" role="menu" v-if="show">
+    <div class="dropdown-menu" id="dropdown-menu6" role="menu" v-if="showHide">
       <div class="dropdown-content">
         <slot name="content">
           <div class="dropdown-item">
@@ -34,15 +34,17 @@
 <script>
 export default {
   props: {
+    showHide: {
+      type: Boolean,
+      default: false,
+    },
     position: {
       type: String,
       default: "left",
     },
   },
   data() {
-    return {
-      show: true,
-    };
+    return {};
   },
   computed: {
     getPosition() {

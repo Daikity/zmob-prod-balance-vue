@@ -14,12 +14,13 @@
       <div class="navbar-end">
         <h3 class="navbar-item">Лысогор Дмитрий Вадимович</h3>
         <div class="navbar-item">
-          <DropDown position="right">
+          <DropDown position="right" :showHide="dropDownShow">
             <template v-slot:trigger>
               <button
                 class="button is-small"
                 aria-haspopup="true"
                 aria-controls="dropdown-menu6"
+                @click="showHideDropDown"
               >
                 <span class="icon is-small">
                   <font-awesome-icon icon="object-group" />
@@ -31,7 +32,10 @@
                 <div class="select-box">
                   <p>Регион</p>
                   <div class="select">
-                    <select v-model="rpegion">
+                    <select
+                      @change="regionAreaDepFilter('rpegion')"
+                      v-model="rpegion"
+                    >
                       <option value=""></option>
                       <option
                         v-for="(reg, i) in $store.getters.GET_STATE.RegionSet"
@@ -46,7 +50,10 @@
                 <div class="select-box">
                   <p>Департамент</p>
                   <div class="select">
-                    <select v-model="prodDepartment">
+                    <select
+                      @change="regionAreaDepFilter('prodDepartment')"
+                      v-model="prodDepartment"
+                    >
                       <option value=""></option>
                       <option
                         v-for="(prodDepart, i) in prodDepartmentSet"
@@ -61,7 +68,10 @@
                 <div class="select-box">
                   <p>Область</p>
                   <div class="select">
-                    <select v-model="prodArea">
+                    <select
+                      @change="regionAreaDepFilter('prodArea')"
+                      v-model="prodArea"
+                    >
                       <option value=""></option>
                       <option
                         v-for="(area, i) in prodAreaSet"
@@ -118,12 +128,16 @@ export default {
   components: {},
   data() {
     return {
-      rpegion: "",
-      prodArea: "",
-      prodDepartment: "",
+      dropDownShow: false,
+
+      rpegion: this.getCookie("rpegion"),
+      prodArea: this.getCookie("prodArea"),
+      prodDepartment: this.getCookie("prodDepartment"),
+
       regionSet: this.$store.getters.GET_STATE.RegionSet,
       prodDepartmentSet: this.$store.getters.GET_STATE.ProdDepartmentSet,
       prodAreaSet: this.$store.getters.GET_STATE.ProdAreaSet,
+
       range: {
         start: new Date("2021.11.01"), //new Date().setDate(new Date().getDate() - 5),
         end: new Date("2021.11.12"), //new Date().setDate(new Date().getDate() + 5),
@@ -147,76 +161,25 @@ export default {
     };
   },
   created() {
-    // this.backend.push({
-    //   url: "CapacityPlanItemSet",
-    //   params: {
-    //     "sap-client": "100",
-    //     $expand: "Pul",
-    //     $filter: `(PlanTs ge datetime'${this.rangeToISOString.start}' and PlanTs le datetime'${this.rangeToISOString.end}') and RegionId eq '${this.rpegion}' and ProdDepId eq '${this.prodDepartment}'`,
-    //   },
-    // });
     this.initDataSoures();
   },
-  mounted() {
-    this.rpegion = this.getCookie("rpegion");
-    this.prodArea = this.getCookie("prodArea");
-    this.prodDepartment = this.getCookie("prodDepartment");
+  computed: {
+    rangeToISOString() {
+      return {
+        start: new Date(this.range.start).toISOString().split("Z")[0],
+        end: new Date(this.range.end).toISOString().split("Z")[0],
+      };
+    },
   },
   watch: {
     rpegion() {
-      // eslint-disable-next-line prettier/prettier
-      document.cookie = `${encodeURIComponent("rpegion")}=${encodeURIComponent(this.rpegion)}`
-      this.prodDepartmentSet = this.$store.getters.GET_STATE.ProdDepartmentSet;
-      this.prodAreaSet = this.$store.getters.GET_STATE.ProdAreaSet;
-
-      if (this.rpegion === "") {
-        this.prodArea = "";
-        this.prodDepartment = "";
-      } else if (this.prodDepartmentSet && this.rpegion !== "") {
-        this.prodDepartmentSet = this.prodDepartmentSet.filter(
-          (el) => el.RegionId === this.rpegion
-        );
-        this.prodAreaSet = this.prodAreaSet.filter(
-          (el) => el.RegionId === this.rpegion
-        );
-        if (this.prodDepartment !== "" && this.rpegion !== "") {
-          this.prodAreaSet = this.prodAreaSet.filter(
-            (el) => el.ProdDepId === this.prodDepartment
-          );
-        }
-      }
+      this.regionAreaDepFilter();
     },
     prodDepartment() {
-      // eslint-disable-next-line prettier/prettier
-      document.cookie = `${encodeURIComponent("prodDepartment")}=${encodeURIComponent(this.prodDepartment)}`;
-      this.prodDepartmentSet = this.$store.getters.GET_STATE.ProdDepartmentSet;
-      this.prodAreaSet = this.$store.getters.GET_STATE.ProdAreaSet;
-
-      if (this.prodDepartmentSet && this.prodDepartment !== "") {
-        const prodDepartment = this.prodDepartmentSet.find(
-          (el) => el.Id === this.prodDepartment
-        );
-        this.rpegion = prodDepartment.RegionId;
-        this.prodAreaSet = this.prodAreaSet.filter(
-          (el) => el.ProdDepId === this.prodDepartment
-        );
-      } else {
-        this.prodArea = "";
-      }
+      this.regionAreaDepFilter();
     },
     prodArea() {
-      // eslint-disable-next-line prettier/prettier
-      document.cookie = `${encodeURIComponent("prodArea")}=${encodeURIComponent(this.prodArea)}`
-      if (this.prodAreaSet && this.prodArea !== "") {
-        const prodArea = this.prodAreaSet.find((el) => el.Id === this.prodArea);
-        this.prodDepartment = prodArea.ProdDepId ? prodArea.ProdDepId : "";
-        this.rpegion = prodArea.RegionId;
-        if (this.prodDepartment !== "" && this.rpegion !== "") {
-          this.prodAreaSet = this.prodAreaSet.filter(
-            (el) => el.ProdDepId === this.prodDepartment
-          );
-        }
-      }
+      this.regionAreaDepFilter();
     },
     range() {
       this.$store.dispatch("CREATE_DATA", {
@@ -229,15 +192,60 @@ export default {
       });
     },
   },
-  computed: {
-    rangeToISOString() {
-      return {
-        start: new Date(this.range.start).toISOString().split("Z")[0],
-        end: new Date(this.range.end).toISOString().split("Z")[0],
-      };
-    },
-  },
   methods: {
+    showHideDropDown() {
+      this.dropDownShow = !this.dropDownShow;
+      this.regionAreaDepFilter();
+    },
+    regionAreaDepFilter(sel) {
+      let areaSet = this.$store.getters.GET_STATE.ProdAreaSet;
+      let regionSet = this.$store.getters.GET_STATE.RegionSet;
+      let departmentSet = this.$store.getters.GET_STATE.ProdDepartmentSet;
+
+      if (sel === "rpegion") {
+        this.prodDepartment = "";
+        this.prodArea = "";
+      }
+
+      if (sel === "prodDepartment") {
+        this.prodArea = "";
+      }
+
+      if (sel === "prodArea") {
+        // eslint-disable-next-line prettier/prettier
+        const area = areaSet.find(el => this.prodArea === el.Id)
+        if (area) {
+          this.prodArea = area.Id;
+          this.rpegion = area.RegionId;
+          this.prodDepartment = area.ProdDepId;
+        }
+      }
+
+      departmentSet = departmentSet.filter((el) => {
+        if (this.rpegion && el.RegionId === this.rpegion) {
+          return el;
+        } else if (this.rpegion === "") return el;
+      });
+
+      areaSet = areaSet.filter((el) => {
+        if (this.rpegion && el.RegionId === this.rpegion) {
+          if (this.prodDepartment && el.ProdDepId === this.prodDepartment) {
+            return el;
+          } else if (this.prodDepartment === "") return el;
+        } else if (this.rpegion === "") return el;
+      });
+
+      this.regionSet = regionSet;
+      this.prodAreaSet = areaSet;
+      this.prodDepartmentSet = departmentSet;
+
+      // eslint-disable-next-line prettier/prettier
+      document.cookie = `${encodeURIComponent("rpegion")}=${encodeURIComponent(this.rpegion)}`
+      // eslint-disable-next-line prettier/prettier
+      document.cookie = `${encodeURIComponent("prodArea")}=${encodeURIComponent(this.prodArea)}`
+      // eslint-disable-next-line prettier/prettier
+      document.cookie = `${encodeURIComponent("prodDepartment")}=${encodeURIComponent(this.prodDepartment)}`;
+    },
     getCPI() {
       this.$store.dispatch("CREATE_DATA", {
         url: "CapacityPlanItemSet",

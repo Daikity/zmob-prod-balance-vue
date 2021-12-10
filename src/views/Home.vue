@@ -33,22 +33,8 @@
             @click="field.isOpenContent = !field.isOpenContent"
           >
             <span class="tag is-light" title="Площадь">2000 га</span>
-            <span class="tag is-danger is-light" title="План">
-              <!-- <font-awesome-icon
-                icon="user"
-                style="margin-right: 0.3em"
-                size="s"
-              /> -->
-              2000 га</span
-            >
-            <span class="tag is-success is-light" title="Факт">
-              <!-- <font-awesome-icon
-                icon="user"
-                style="margin-right: 0.3em"
-                size="s"
-              /> -->
-              300 га</span
-            >
+            <span class="tag is-danger is-light" title="План"> 2000 га</span>
+            <span class="tag is-success is-light" title="Факт"> 300 га</span>
 
             <span class="icon"
               ><font-awesome-icon
@@ -73,19 +59,9 @@
                 <div style="margin-right: 0.5em">
                   <span class="tag is-light" title="Площадь">390 га</span>
                   <span class="tag is-danger is-light" title="План">
-                    <!-- <font-awesome-icon
-                      icon="user"
-                      style="margin-right: 0.3em"
-                      size="s"
-                    /> -->
                     189 га</span
                   >
                   <span class="tag is-success is-light" title="Факт">
-                    <!-- <font-awesome-icon
-                      icon="user"
-                      style="margin-right: 0.3em"
-                      size="s"
-                    /> -->
                     55 га</span
                   >
                 </div>
