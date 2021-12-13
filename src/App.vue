@@ -9,7 +9,7 @@
     </div>
     <div class="navbar-menu">
       <div class="navbar-start">
-        <h1 class="navbar-item">Приморье / ПрА ПО Степнянское / Воздвиженка</h1>
+        <h1 class="navbar-item">{{ headTitel }}</h1>
       </div>
       <div class="navbar-end">
         <h3 class="navbar-item">Лысогор Дмитрий Вадимович</h3>
@@ -83,7 +83,7 @@
                     </select>
                   </div>
                 </div>
-                <button @click="getCPI" class="button is-small is-dark">
+                <button @click="getCPI(true)" class="button is-small is-dark">
                   Выбрать
                 </button>
               </div>
@@ -134,6 +134,8 @@ export default {
       prodArea: this.getCookie("prodArea"),
       prodDepartment: this.getCookie("prodDepartment"),
 
+      headTitel: "Приморье / ПрА ПО Степнянское / Воздвиженка",
+
       regionSet: this.$store.getters.GET_STATE.RegionSet,
       prodDepartmentSet: this.$store.getters.GET_STATE.ProdDepartmentSet,
       prodAreaSet: this.$store.getters.GET_STATE.ProdAreaSet,
@@ -162,6 +164,9 @@ export default {
   },
   created() {
     this.initDataSoures();
+    if (this.rpegion !== "" && this.prodDepartment !== "") {
+      this.getCPI();
+    }
   },
   computed: {
     rangeToISOString() {
@@ -246,7 +251,8 @@ export default {
       // eslint-disable-next-line prettier/prettier
       document.cookie = `${encodeURIComponent("prodDepartment")}=${encodeURIComponent(this.prodDepartment)}`;
     },
-    getCPI() {
+    getCPI(clouse) {
+      if (clouse) this.showHideDropDown();
       this.$store.dispatch("CREATE_DATA", {
         url: "CapacityPlanItemSet",
         params: {

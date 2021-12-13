@@ -1,89 +1,75 @@
 <template>
   <div
     class="mashin-info-block"
-    v-for="data in cpiData"
-    :key="data.id"
-    :class="data.OrderId ? 'mashin-info-assigned' : 'mashin-info-not-assigned'"
+    :class="
+      clousedOperation ? 'mashin-info-assigned' : 'mashin-info-not-assigned'
+    "
   >
     <div class="mashin-content">
       <div class="mashin-info">
         <font-awesome-icon size="s" icon="tractor" />
-        <div class="edit-block" v-if="!data.OrderId && data.isTractorEdit">
+        <div
+          class="edit-block"
+          v-if="!cpiData.OrderId && cpiData.isTractorEdit"
+        >
           <input
             type="text"
             class="input is-info is-small"
             style="margin-left: 0.5em"
             v-model="editNaw.TractorModel"
           />
-          <button
-            class="button is-small"
-            @click="confirm, (data.isTractorEdit = !data.isTractorEdit)"
-          >
+          <button class="button is-small" @click="confirm">
             <font-awesome-icon
               size="s"
               icon="check"
               style="color: lightgreen"
             />
           </button>
-          <button
-            class="button is-small"
-            @click="cancel, (data.isTractorEdit = !data.isTractorEdit)"
-          >
+          <button class="button is-small" @click="cancel">
             <font-awesome-icon size="s" icon="ban" style="color: lightcoral" />
           </button>
         </div>
-        <div
-          class="info"
-          v-else
-          @dblclick="edit(data), (data.isTractorEdit = !data.isTractorEdit)"
-        >
+        <div class="info" v-else @dblclick="edit(cpiData)">
           <span
             class="tag is-success"
-            :class="data.OrderId ? 'is-assigned' : 'is-not-assigned'"
+            :class="cpiData.OrderId ? 'is-assigned' : 'is-not-assigned'"
           >
-            {{ data.OrderId }}
+            {{ cpiData.OrderId }}
           </span>
           <p class="title is-7">
-            {{ data.TractorModel }}
+            {{ cpiData.TractorModel }}
           </p>
           <p class="subtitle is-7">
-            {{ data.TractorId }}
+            {{ cpiData.TractorId }}
           </p>
         </div>
       </div>
       <div class="mashin-info">
         <font-awesome-icon size="s" icon="trailer" />
-        <div class="edit-block" v-if="!data.OrderId && data.isTrailerEdit">
+        <div
+          class="edit-block"
+          v-if="!cpiData.OrderId && cpiData.isTrailerEdit"
+        >
           <input
             type="text"
             class="input is-info is-small"
             style="margin-left: 0.5em"
             v-model="editNaw.TraileModel"
           />
-          <button
-            class="button is-small"
-            @click="confirm, (data.isTrailerEdit = !data.isTrailerEdit)"
-          >
+          <button class="button is-small" @click="confirm">
             <font-awesome-icon
               size="s"
               icon="check"
               style="color: lightgreen"
             />
           </button>
-          <button
-            class="button is-small"
-            @click="cancel, (data.isTrailerEdit = !data.isTrailerEdit)"
-          >
+          <button class="button is-small" @click="cancel">
             <font-awesome-icon size="s" icon="ban" style="color: lightcoral" />
           </button>
         </div>
-        <div
-          class="info"
-          v-else
-          @dblclick="edit(data), (data.isTrailerEdit = !data.isTrailerEdit)"
-        >
-          <p class="title is-7">{{ data.TraileModel || "CHR7509M" }}</p>
-          <p class="subtitle is-7">{{ data.TraileId || "10121494" }}</p>
+        <div class="info" v-else @dblclick="edit(cpiData)">
+          <p class="title is-7">{{ cpiData.TraileModel || "CHR7509M" }}</p>
+          <p class="subtitle is-7">{{ cpiData.TraileId || "10121494" }}</p>
         </div>
         <!-- <div class="info" v-else>
           <p class="title is-7">Без прицепа</p>
@@ -91,35 +77,28 @@
       </div>
       <div class="mashin-info">
         <font-awesome-icon size="s" icon="male" />
-        <div class="edit-block" v-if="!data.OrderId && data.isEmploeeEdit">
+        <div
+          class="edit-block"
+          v-if="!cpiData.OrderId && cpiData.isEmploeeEdit"
+        >
           <input
             type="text"
             class="input is-info is-small"
             style="margin-left: 0.5em"
             v-model="editNaw.emploeeName"
           />
-          <button
-            class="button is-small"
-            @click="confirm, (data.isEmploeeEdit = !data.isEmploeeEdit)"
-          >
+          <button class="button is-small" @click="confirm">
             <font-awesome-icon
               size="s"
               icon="check"
               style="color: lightgreen"
             />
           </button>
-          <button
-            class="button is-small"
-            @click="cancel, (data.isEmploeeEdit = !data.isEmploeeEdit)"
-          >
+          <button class="button is-small" @click="cancel">
             <font-awesome-icon size="s" icon="ban" style="color: lightcoral" />
           </button>
         </div>
-        <div
-          class="info"
-          v-else
-          @dblclick="edit(data), (data.isEmploeeEdit = !data.isEmploeeEdit)"
-        >
+        <div class="info" v-else @dblclick="edit(cpiData)">
           <p class="title is-7">Иванов Дмитрий Петрович</p>
           <p class="subtitle is-7">15647432</p>
         </div>
@@ -202,8 +181,10 @@
 <script>
 export default {
   props: {
-    cpiData: Array,
+    cpiData: Object,
+    clousedOperation: Boolean,
   },
+
   data() {
     return {
       CPI_Change: { Id: null },
