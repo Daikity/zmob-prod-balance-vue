@@ -12,25 +12,25 @@
         <Map />
       </div>
     </div>
-    <div class="column is-6" v-for="(field, i) in fields" :key="i">
+    <div class="column is-6" v-for="(cpi, i) in CPI" :key="i">
       <div class="card">
         <header class="card-header">
           <div class="card-header-title">
             <div class="media-content">
               <p class="title is-6">
                 <font-awesome-icon icon="barcode" />
-                Прямое комбайнирование
+                {{ operationName(cpi.materialId) }}
               </p>
               <p class="subtitle is-7">
                 <font-awesome-icon icon="certificate" />
-                {{ getCulture(field.cultureId) }}
+                {{ cultureName(cpi.cultureId) }}
               </p>
             </div>
           </div>
           <button
             class="card-header-icon"
             aria-label="more options"
-            @click="field.isOpenContent = !field.isOpenContent"
+            @click="cpi.isOpenContent = !cpi.isOpenContent"
           >
             <span class="tag is-light" title="Площадь">2000 га</span>
             <span class="tag is-danger is-light" title="План"> 2000 га</span>
@@ -38,137 +38,142 @@
 
             <span class="icon"
               ><font-awesome-icon
-                :icon="field.isOpenContent ? 'angle-up' : 'angle-down'"
+                :icon="cpi.isOpenContent ? 'angle-up' : 'angle-down'"
             /></span>
           </button>
         </header>
         <div
           class="card-content"
           style="padding: 0em"
-          :class="{ 'content-hide': !field.isOpenContent }"
+          :class="{ 'content-hide': !cpi.isOpenContent }"
         >
-          <article class="panel" style="box-shadow: none">
-            <div class="panel-heading cpi-info" style="height: 2.5em">
-              <div>
-                <span>{{ field.fieldId }} </span>
-                <p style="font-size: 0.7em; font-weight: 600">
-                  3154001 Большехаланский
+          <div v-for="field in cpi.fields" :key="field.Id">
+            <article class="panel" style="box-shadow: none">
+              <div class="panel-heading cpi-info" style="height: 2.5em">
+                <div>
+                  <span>{{ field.FieldId }}</span>
+                  <p style="font-size: 0.7em; font-weight: 600">
+                    {{ fieldName(field.FieldId) }}
+                  </p>
+                </div>
+                <div style="display: flex">
+                  <div style="margin-right: 0.5em">
+                    <span class="tag is-light" title="Площадь">390 га</span>
+                    <span class="tag is-danger is-light" title="План">
+                      189 га</span
+                    >
+                    <span class="tag is-success is-light" title="Факт">
+                      55 га</span
+                    >
+                  </div>
+                  <button
+                    @click="showMap = true"
+                    class="button is-primary is-small"
+                  >
+                    <font-awesome-icon icon="map" />
+                  </button>
+                  <button class="button is-small" style="margin-left: 0.5em">
+                    <font-awesome-icon icon="trash" />
+                  </button>
+                </div>
+              </div>
+
+              <div class="panel-block">
+                <p class="control has-icons-left">
+                  <input
+                    class="input is-info is-small"
+                    type="text"
+                    placeholder="поиск..."
+                  />
+                  <span class="icon is-left">
+                    <font-awesome-icon icon="search" />
+                  </span>
                 </p>
               </div>
-              <div style="display: flex">
-                <div style="margin-right: 0.5em">
-                  <span class="tag is-light" title="Площадь">390 га</span>
-                  <span class="tag is-danger is-light" title="План">
-                    189 га</span
-                  >
-                  <span class="tag is-success is-light" title="Факт">
-                    55 га</span
-                  >
-                </div>
-                <button
-                  @click="showMap = true"
-                  class="button is-primary is-small"
-                >
-                  <font-awesome-icon icon="map" />
-                </button>
-                <button class="button is-small" style="margin-left: 0.5em">
-                  <font-awesome-icon icon="trash" />
-                </button>
-              </div>
-            </div>
 
-            <div class="panel-block">
-              <p class="control has-icons-left">
-                <input
-                  class="input is-info is-small"
-                  type="text"
-                  placeholder="поиск..."
-                />
-                <span class="icon is-left">
-                  <font-awesome-icon icon="search" />
-                </span>
-              </p>
-            </div>
-
-            <div class="cpi-dates" v-for="date in dates" :key="date.id">
-              <a
-                class="panel-block"
-                style="justify-content: space-between"
-                @dblclick="date.isOpen = !date.isOpen"
-              >
-                <div style="padding: 0 0.2em; width: 30%">
-                  <div>
-                    <span>
-                      <font-awesome-icon icon="calendar-alt" />
-                      {{ getDateWithString(date.date) }}
-                    </span>
-                  </div>
-                  <font-awesome-icon icon="money-check-alt" />
-                  {{ Math.floor(Math.random() * 100000) + " р." }}
-                </div>
-                <div style="width: 30%">
-                  <button class="button is-small" title="Добавить">
-                    <font-awesome-icon icon="plus" />
-                  </button>
-                  <button class="button is-small" title="Создать пул">
-                    <font-awesome-icon icon="folder-plus" />
-                  </button>
-                  <button class="button is-small" title="Добавить отряд">
-                    <font-awesome-icon icon="user-friends" />
-                  </button>
-                  <button class="button is-small" title="Пересчет">
-                    <font-awesome-icon icon="calculator" />
-                  </button>
-                </div>
-                <div
-                  style="
-                    width: 40%;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                  "
+              <div class="cpi-dates" v-for="date in cpi.dates" :key="date.id">
+                <a
+                  class="panel-block"
+                  style="justify-content: space-between"
+                  @dblclick="date.isOpen = !date.isOpen"
                 >
-                  <div>
-                    <font-awesome-icon
-                      icon="users"
-                      size="xs"
-                      style="margin-left: 5px; font-size: 0.8em"
-                    />
-                    <span style="margin-left: 5px">{{
-                      Math.floor(Math.random() * 99)
-                    }}</span>
+                  <div style="padding: 0 0.2em; width: 30%">
+                    <div>
+                      <span>
+                        <font-awesome-icon icon="calendar-alt" />
+                        {{ getDateWithString(date.date) }}
+                      </span>
+                    </div>
+                    <font-awesome-icon icon="money-check-alt" />
+                    {{ Math.floor(Math.random() * 100000) + " р." }}
                   </div>
-                  <div>
-                    <font-awesome-icon
-                      style="margin-left: 5px; font-size: 0.8em"
-                      :icon="
-                        weather[Math.floor(Math.random() * weather.length)]
-                      "
-                    />
-                    <strong style="margin-left: 2px"
-                      >{{ Math.floor(Math.random() * 30) }}℃
-                    </strong>
+                  <div style="width: 30%">
+                    <button class="button is-small" title="Добавить">
+                      <font-awesome-icon icon="plus" />
+                    </button>
+                    <button class="button is-small" title="Создать пул">
+                      <font-awesome-icon icon="folder-plus" />
+                    </button>
+                    <button class="button is-small" title="Добавить отряд">
+                      <font-awesome-icon icon="user-friends" />
+                    </button>
+                    <button class="button is-small" title="Пересчет">
+                      <font-awesome-icon icon="calculator" />
+                    </button>
                   </div>
-                  <div>
-                    <font-awesome-icon
-                      icon="tint"
-                      style="margin-left: 5px; font-size: 0.8em"
-                    />
-                    {{ Math.floor(Math.random() * 120) + "мм." }}
-                    <span class="tag is-light" title="Гектары">{{
-                      Math.floor(Math.random() * 500) + " га."
-                    }}</span>
+                  <div
+                    style="
+                      width: 40%;
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                    "
+                  >
+                    <div>
+                      <font-awesome-icon
+                        icon="users"
+                        size="xs"
+                        style="margin-left: 5px; font-size: 0.8em"
+                      />
+                      <span style="margin-left: 5px">{{
+                        Math.floor(Math.random() * 99)
+                      }}</span>
+                    </div>
+                    <div>
+                      <font-awesome-icon
+                        style="margin-left: 5px; font-size: 0.8em"
+                        :icon="
+                          weather[Math.floor(Math.random() * weather.length)]
+                        "
+                      />
+                      <strong style="margin-left: 2px"
+                        >{{ Math.floor(Math.random() * 30) }}℃
+                      </strong>
+                    </div>
+                    <div>
+                      <font-awesome-icon
+                        icon="tint"
+                        style="margin-left: 5px; font-size: 0.8em"
+                      />
+                      {{ Math.floor(Math.random() * 120) + "мм." }}
+                      <span class="tag is-light" title="Гектары">{{
+                        Math.floor(Math.random() * 500) + " га."
+                      }}</span>
+                    </div>
                   </div>
+                </a>
+                <div :class="{ 'cpi-hide cpi-box': !date.isOpen }">
+                  <CPI
+                    v-for="dataCpi in date.dataCPI"
+                    :key="dataCpi.Id"
+                    :clousedOperation="dataCpi.OrderId !== ''"
+                    :cpiData="dataCpi"
+                    @cpi-change="cpiChange"
+                  />
                 </div>
-              </a>
-              <div :class="{ 'cpi-hide cpi-box': !date.isOpen }">
-                <CPI
-                  :cpi-data="getDataCpi(field.fieldId)"
-                  @cpi-change="cpiChange"
-                />
               </div>
-            </div>
-          </article>
+            </article>
+          </div>
         </div>
       </div>
     </div>
@@ -256,7 +261,7 @@ export default {
   data() {
     return {
       showMap: false,
-      fields: [],
+      CPI: [],
       weather: [
         "cloud-moon-rain",
         "cloud-showers-heavy",
@@ -290,9 +295,12 @@ export default {
     };
   },
   created() {
-    this.getFields();
+    this.getCPI();
   },
   methods: {
+    isTrueDate(date) {
+      return this.cpiDate.date === this.formatDate(date);
+    },
     getDateWithString(date) {
       const now = new Date(date);
       let dd = now.getDate();
@@ -305,18 +313,19 @@ export default {
       if (yy < 10) yy = "0" + yy;
       return dd + "." + mm + "." + yy;
     },
-    getCulture(id) {
-      if (!this.GET_STATE.CultureSet) return "";
-      return (
-        this.GET_STATE.CultureSet.find((el) => el.Id === id).CultureName || ""
-      );
+    cultureName(id) {
+      const culture =
+        this.GET_STATE.CultureSet.find((el) => el.Id === id) || [];
+      return culture.CultureName || "";
     },
-    getOperation(id) {
-      if (!this.GET_STATE.OperationSet) return "";
-      return (
-        this.GET_STATE.OperationSet.find((el) => el.SubId === id).Description ||
-        ""
-      );
+    operationName(id) {
+      const operation =
+        this.GET_STATE.OperationSet.find((el) => el.Id === id) || [];
+      return operation.Description || "";
+    },
+    fieldName(id) {
+      const field = this.GET_STATE.FieldSet.find((el) => el.Id === id) || [];
+      return `${field.ProdDepId} ${field.Name}` || "";
     },
     cpiChange(callBack) {
       let fields = this.fields;
@@ -334,24 +343,31 @@ export default {
       const CPIset = this.CapacityPlanItemSet;
       return CPIset.filter((e) => e.FieldId === fieldId);
     },
-    getFields() {
-      const aFields = [];
+    getCPI() {
+      const CPI = [];
       const operations = [];
       const fields = [];
-      const dates = [];
+      const _dates = [];
       // получаем id операций
       let _operations = this.getUniqueListBy(
         this.CapacityPlanItemSet,
-        "MaterialId"
+        "OperationId"
       );
       _operations.forEach((el) => {
         operations.push(el.MaterialId);
       });
-      // получаем поля
+
+      // удаляем дубликаты полей
       let _fields = this.getUniqueListBy(this.CapacityPlanItemSet, "FieldId");
       _fields.forEach((el) => {
         fields.push(el.FieldId);
       });
+
+      console.log(_fields);
+
+      // удаляем дубликаты культур (это и есть список операций)
+      let _cultureId = this.getUniqueListBy(_fields, "CultureId");
+
       // получаем используемые даты
       let _planDates = this.getUniqueListBy(
         this.CapacityPlanItemSet,
@@ -362,29 +378,53 @@ export default {
         let res = el.PlanDate.replace("/Date(", "").replace(")/", "");
         let date = new Date(Number(res));
         // eslint-disable-next-line prettier/prettier
-        dates.push(this.formatDate(date))
+        _dates.push(this.formatDate(date))
       });
 
-      console.log(dates);
-      console.log(_operations);
-      console.log(_fields);
+      _cultureId.forEach((el) => {
+        const fields = [];
+        _fields.forEach((fl) => {
+          if (fl.Suboperation === el.Suboperation) fields.push(fl);
+        });
+        const dates = [];
+        _planDates.forEach((dt) => {
+          if (dt.Suboperation === el.Suboperation) {
+            let res = dt.PlanDate.replace("/Date(", "").replace(")/", "");
+            let date = new Date(Number(res));
 
-      this.getUniqueListBy(this.CapacityPlanItemSet, "OperationId").forEach(
-        (el) => {
-          aFields.push({
-            id: el.Id,
-            cultureId: el.CultureId,
-            subId: el.Suboperation,
-            fieldId: el.FieldId,
-            exempCord: [],
-            CPI_change: {},
-            isOpen: false,
-            isOpenContent: false,
-          });
-        }
-      );
-      this.fields = aFields;
-      return aFields;
+            const dataCPI = [];
+            const dataCpiAll = this.getDataCpi(dt.FieldId);
+            dataCpiAll.forEach((dcpi) => {
+              if (dt.PlanDate === dcpi.PlanDate) dataCPI.push(dcpi);
+            });
+
+            dates.push({
+              id: `${Math.floor(Math.random() * 8956)}-${Math.floor(
+                Math.random() * 100000
+              )}-${Math.floor(Math.random() * 350)}`,
+              date: this.formatDate(date),
+              dataCPI: dataCPI,
+              isOpen: false,
+            });
+          }
+        });
+        CPI.push({
+          id: el.Id,
+          cultureId: el.CultureId,
+          subId: el.Suboperation,
+          fields: fields,
+          dates: dates,
+          materialId: el.MaterialId,
+          planDate: el.PlanDate,
+          exempCord: [],
+          CPI_change: {},
+          isOpen: false,
+          isOpenContent: false,
+        });
+      });
+      this.CPI = CPI;
+      console.log(CPI);
+      return CPI;
     },
     formatDate(date) {
       let dd = date.getDate();
@@ -400,10 +440,10 @@ export default {
   },
   watch: {
     CapacityPlanItemSet() {
-      this.getFields();
+      this.getCPI();
     },
     GET_STATE() {
-      this.getFields();
+      this.getCPI();
     },
   },
   computed: {
