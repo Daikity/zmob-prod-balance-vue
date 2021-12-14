@@ -40,7 +40,7 @@
           </span>
           <div class="info">
             <p class="title is-7">
-              {{ getMashin(getDataCpi(cpiId).TractorId).Model }}
+              {{ getMashin(getDataCpi(cpiId).TractorId).Eqktx }}
             </p>
             <p class="subtitle is-7">{{ getDataCpi(cpiId).TractorId }}</p>
           </div>
@@ -75,7 +75,7 @@
           v-if="getDataCpi(cpiId).TrailerId !== ''"
         >
           <p class="title is-7">
-            {{ getMashin(getDataCpi(cpiId).TrailerId).Ename }}
+            {{ getMashin(getDataCpi(cpiId).TrailerId).Eqktx }}
           </p>
           <p class="subtitle is-7">{{ getDataCpi(cpiId).TrailerId }}</p>
         </div>
