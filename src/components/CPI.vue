@@ -10,7 +10,7 @@
         <font-awesome-icon size="s" icon="tractor" />
         <div
           class="edit-block"
-          v-if="!cpiData.OrderId && cpiData.isTractorEdit"
+          v-if="!getDataCpi(cpiId).OrderId && getDataCpi(cpiId).isTractorEdit"
         >
           <input
             type="text"
@@ -29,26 +29,28 @@
             <font-awesome-icon size="s" icon="ban" style="color: lightcoral" />
           </button>
         </div>
-        <div class="info" v-else @dblclick="edit(cpiData)">
+        <div v-else @dblclick="edit(getDataCpi(cpiId), 'tractor')">
           <span
             class="tag is-success"
-            :class="cpiData.OrderId ? 'is-assigned' : 'is-not-assigned'"
+            :class="
+              getDataCpi(cpiId).OrderId ? 'is-assigned' : 'is-not-assigned'
+            "
           >
-            {{ cpiData.OrderId }}
+            {{ getDataCpi(cpiId).OrderId }}
           </span>
-          <p class="title is-7">
-            {{ cpiData.TractorModel }}
-          </p>
-          <p class="subtitle is-7">
-            {{ cpiData.TractorId }}
-          </p>
+          <div class="info">
+            <p class="title is-7">
+              {{ getMashin(getDataCpi(cpiId).TractorId).Model }}
+            </p>
+            <p class="subtitle is-7">{{ getDataCpi(cpiId).TractorId }}</p>
+          </div>
         </div>
       </div>
       <div class="mashin-info">
         <font-awesome-icon size="s" icon="trailer" />
         <div
           class="edit-block"
-          v-if="!cpiData.OrderId && cpiData.isTrailerEdit"
+          v-if="!getDataCpi(cpiId).OrderId && getDataCpi(cpiId).isTrailerEdit"
         >
           <input
             type="text"
@@ -67,61 +69,79 @@
             <font-awesome-icon size="s" icon="ban" style="color: lightcoral" />
           </button>
         </div>
-        <div class="info" v-else @dblclick="edit(cpiData)">
-          <p class="title is-7">{{ cpiData.TraileModel || "CHR7509M" }}</p>
-          <p class="subtitle is-7">{{ cpiData.TraileId || "10121494" }}</p>
+        <div
+          class="info"
+          @dblclick="edit(getDataCpi(cpiId), 'trailer')"
+          v-if="getDataCpi(cpiId).TrailerId !== ''"
+        >
+          <p class="title is-7">
+            {{ getMashin(getDataCpi(cpiId).TrailerId).Ename }}
+          </p>
+          <p class="subtitle is-7">{{ getDataCpi(cpiId).TrailerId }}</p>
+        </div>
+        <div class="info" v-else @dblclick="edit(getDataCpi(cpiId), 'trailer')">
+          <p class="title is-7">Без прицепа</p>
         </div>
         <!-- <div class="info" v-else>
           <p class="title is-7">Без прицепа</p>
         </div> -->
       </div>
       <div class="mashin-info">
-        <font-awesome-icon size="s" icon="male" />
         <div
-          class="edit-block"
-          v-if="!cpiData.OrderId && cpiData.isEmploeeEdit"
+          v-if="!getDataCpi(cpiId).OrderId && getDataCpi(cpiId).isEmploeeEdit"
         >
-          <input
-            type="text"
-            class="input is-info is-small"
-            style="margin-left: 0.5em"
-            v-model="editNaw.emploeeName"
-          />
-          <button class="button is-small" @click="confirm">
-            <font-awesome-icon
-              size="s"
-              icon="check"
-              style="color: lightgreen"
+          <font-awesome-icon size="s" icon="male" />
+          <div class="edit-block">
+            <input
+              type="text"
+              class="input is-info is-small"
+              style="margin-left: 0.5em"
+              v-model="editNaw.emploeeName"
             />
-          </button>
-          <button class="button is-small" @click="cancel">
-            <font-awesome-icon size="s" icon="ban" style="color: lightcoral" />
+            <button class="button is-small" @click="confirm">
+              <font-awesome-icon
+                size="s"
+                icon="check"
+                style="color: lightgreen"
+              />
+            </button>
+            <button class="button is-small" @click="cancel">
+              <font-awesome-icon
+                size="s"
+                icon="ban"
+                style="color: lightcoral"
+              />
+            </button>
+          </div>
+        </div>
+        <div v-else>
+          <font-awesome-icon size="s" icon="male" />
+          <div class="info" @dblclick="edit(getDataCpi(cpiId), 'driver')">
+            <p class="title is-7">
+              {{ getEmploee(getDataCpi(cpiId).DriverId).Ename }}
+            </p>
+            <p class="subtitle is-7">{{ getDataCpi(cpiId).DriverId }}</p>
+          </div>
+        </div>
+        <div>
+          <font-awesome-icon
+            style="color: orange"
+            title="Дневная смена"
+            size="s"
+            icon="sun"
+            v-if="Math.floor(Math.random() * 3) > 1"
+          />
+          <font-awesome-icon
+            style="color: #004797"
+            size="s"
+            icon="moon"
+            v-else
+            title="Ночная смена"
+          />
+          <button class="button is-small" style="margin-left: 0.5em">
+            <font-awesome-icon icon="trash" />
           </button>
         </div>
-        <div class="info" v-else @dblclick="edit(cpiData)">
-          <p class="title is-7">Иванов Дмитрий Петрович</p>
-          <p class="subtitle is-7">15647432</p>
-        </div>
-        <!-- <div class="info" v-else>
-          <p class="title is-7">Без прицепа</p>
-        </div> -->
-        <font-awesome-icon
-          style="color: orange"
-          title="Дневная смена"
-          size="s"
-          icon="sun"
-          v-if="Math.floor(Math.random() * 3) > 1"
-        />
-        <font-awesome-icon
-          style="color: #004797"
-          size="s"
-          icon="moon"
-          v-else
-          title="Ночная смена"
-        />
-        <button class="button is-small" style="margin-left: 0.5em">
-          <font-awesome-icon icon="trash" />
-        </button>
       </div>
     </div>
   </div>
@@ -156,8 +176,18 @@
 .mashin-info {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  width: 25%;
   padding: 0.2em;
   cursor: pointer;
+}
+.mashin-info:last-child {
+  width: 50%;
+  justify-content: space-between;
+}
+.mashin-info > * {
+  display: flex;
+  align-items: center;
 }
 .info {
   margin: 0 0.4em;
@@ -179,9 +209,11 @@
 </style>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   props: {
-    cpiData: Object,
+    cpiId: String,
     clousedOperation: Boolean,
   },
 
@@ -192,7 +224,24 @@ export default {
       editConfirm: {},
     };
   },
+  computed: {
+    ...mapGetters(["GET_STATE"]),
+  },
   methods: {
+    getDataCpi(id) {
+      const CPIset = this.GET_STATE.CapacityPlanItemSet;
+      return CPIset.find((el) => el.Id === id);
+    },
+    getEmploee(id) {
+      const employeeSet = this.GET_STATE.EmployeeSet;
+      const result = employeeSet ? employeeSet.find((el) => el.Id === id) : {};
+      return result;
+    },
+    getMashin(id) {
+      const machineSet = this.GET_STATE.MachineSet;
+      const result = machineSet ? machineSet.find((el) => el.Id === id) : {};
+      return result;
+    },
     hendelRow(id) {
       this.CPI_Change = this.cpiData.filter((el) => el.Id === id)[0];
       this.$emit("cpiChange", this.CPI_Change);
@@ -204,8 +253,9 @@ export default {
     cancel() {
       this.editNaw = {};
     },
-    edit(data) {
-      this.editNaw = data;
+    edit(data, editPlace) {
+      this.editNaw.data = data;
+      this.editNaw.editPlace = editPlace;
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="columns is-mobile is-multiline" style="padding-top: 2em">
+  <div style="padding-top: 2em">
     <div class="map">
       <div
         class="map-btn"
@@ -12,167 +12,169 @@
         <Map />
       </div>
     </div>
-    <div class="column is-6" v-for="(cpi, i) in CPI" :key="i">
-      <div class="card">
-        <header class="card-header">
-          <div class="card-header-title">
-            <div class="media-content">
-              <p class="title is-6">
-                <font-awesome-icon icon="barcode" />
-                {{ operationName(cpi.materialId) }}
-              </p>
-              <p class="subtitle is-7">
-                <font-awesome-icon icon="certificate" />
-                {{ cultureName(cpi.cultureId) }}
-              </p>
-            </div>
-          </div>
-          <button
-            class="card-header-icon"
-            aria-label="more options"
-            @click="cpi.isOpenContent = !cpi.isOpenContent"
-          >
-            <span class="tag is-light" title="Площадь">2000 га</span>
-            <span class="tag is-danger is-light" title="План"> 2000 га</span>
-            <span class="tag is-success is-light" title="Факт"> 300 га</span>
-
-            <span class="icon"
-              ><font-awesome-icon
-                :icon="cpi.isOpenContent ? 'angle-up' : 'angle-down'"
-            /></span>
-          </button>
-        </header>
-        <div
-          class="card-content"
-          style="padding: 0em"
-          :class="{ 'content-hide': !cpi.isOpenContent }"
-        >
-          <div v-for="field in cpi.fields" :key="field.Id">
-            <article class="panel" style="box-shadow: none">
-              <div class="panel-heading cpi-info" style="height: 2.5em">
-                <div>
-                  <span>{{ field.FieldId }}</span>
-                  <p style="font-size: 0.7em; font-weight: 600">
-                    {{ fieldName(field.FieldId) }}
-                  </p>
-                </div>
-                <div style="display: flex">
-                  <div style="margin-right: 0.5em">
-                    <span class="tag is-light" title="Площадь">390 га</span>
-                    <span class="tag is-danger is-light" title="План">
-                      189 га</span
-                    >
-                    <span class="tag is-success is-light" title="Факт">
-                      55 га</span
-                    >
-                  </div>
-                  <button
-                    @click="showMap = true"
-                    class="button is-primary is-small"
-                  >
-                    <font-awesome-icon icon="map" />
-                  </button>
-                  <button class="button is-small" style="margin-left: 0.5em">
-                    <font-awesome-icon icon="trash" />
-                  </button>
-                </div>
-              </div>
-
-              <div class="panel-block">
-                <p class="control has-icons-left">
-                  <input
-                    class="input is-info is-small"
-                    type="text"
-                    placeholder="поиск..."
-                  />
-                  <span class="icon is-left">
-                    <font-awesome-icon icon="search" />
-                  </span>
+    <div class="columns is-multiline" style="padding: 0 0.7em" v-if="CPI">
+      <div class="column is-6" v-for="cpi in CPI" :key="cpi.Id">
+        <div class="card">
+          <header class="card-header">
+            <div class="card-header-title">
+              <div class="media-content">
+                <p class="title is-6">
+                  <font-awesome-icon icon="barcode" />
+                  {{ operationName(cpi.materialId) }}
+                </p>
+                <p class="subtitle is-7">
+                  <font-awesome-icon icon="certificate" />
+                  {{ cultureName(cpi.cultureId) }}
                 </p>
               </div>
+            </div>
+            <button
+              class="card-header-icon"
+              aria-label="more options"
+              @click="cpi.isOpenContent = !cpi.isOpenContent"
+            >
+              <span class="tag is-light" title="Площадь">2000 га</span>
+              <span class="tag is-danger is-light" title="План"> 2000 га</span>
+              <span class="tag is-success is-light" title="Факт"> 300 га</span>
 
-              <div class="cpi-dates" v-for="date in cpi.dates" :key="date.id">
-                <a
-                  class="panel-block"
-                  style="justify-content: space-between"
-                  @dblclick="date.isOpen = !date.isOpen"
-                >
-                  <div style="padding: 0 0.2em; width: 30%">
-                    <div>
-                      <span>
-                        <font-awesome-icon icon="calendar-alt" />
-                        {{ getDateWithString(date.date) }}
-                      </span>
-                    </div>
-                    <font-awesome-icon icon="money-check-alt" />
-                    {{ Math.floor(Math.random() * 100000) + " р." }}
+              <span class="icon"
+                ><font-awesome-icon
+                  :icon="cpi.isOpenContent ? 'angle-up' : 'angle-down'"
+              /></span>
+            </button>
+          </header>
+          <div
+            class="card-content"
+            style="padding: 0em"
+            :class="{ 'content-hide': !cpi.isOpenContent }"
+          >
+            <div v-for="field in cpi.fields" :key="field.Id">
+              <article class="panel" style="box-shadow: none">
+                <div class="panel-heading cpi-info" style="height: 2.5em">
+                  <div>
+                    <span>{{ field.FieldId }}</span>
+                    <p style="font-size: 0.7em; font-weight: 600">
+                      {{ fieldName(field.FieldId) }}
+                    </p>
                   </div>
-                  <div style="width: 30%">
-                    <button class="button is-small" title="Добавить">
-                      <font-awesome-icon icon="plus" />
+                  <div style="display: flex">
+                    <div style="margin-right: 0.5em">
+                      <span class="tag is-light" title="Площадь">390 га</span>
+                      <span class="tag is-danger is-light" title="План">
+                        189 га</span
+                      >
+                      <span class="tag is-success is-light" title="Факт">
+                        55 га</span
+                      >
+                    </div>
+                    <button
+                      @click="showMap = true"
+                      class="button is-primary is-small"
+                    >
+                      <font-awesome-icon icon="map" />
                     </button>
-                    <button class="button is-small" title="Создать пул">
-                      <font-awesome-icon icon="folder-plus" />
-                    </button>
-                    <button class="button is-small" title="Добавить отряд">
-                      <font-awesome-icon icon="user-friends" />
-                    </button>
-                    <button class="button is-small" title="Пересчет">
-                      <font-awesome-icon icon="calculator" />
+                    <button class="button is-small" style="margin-left: 0.5em">
+                      <font-awesome-icon icon="trash" />
                     </button>
                   </div>
-                  <div
-                    style="
-                      width: 40%;
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                    "
-                  >
-                    <div>
-                      <font-awesome-icon
-                        icon="users"
-                        size="xs"
-                        style="margin-left: 5px; font-size: 0.8em"
-                      />
-                      <span style="margin-left: 5px">{{
-                        Math.floor(Math.random() * 99)
-                      }}</span>
-                    </div>
-                    <div>
-                      <font-awesome-icon
-                        style="margin-left: 5px; font-size: 0.8em"
-                        :icon="
-                          weather[Math.floor(Math.random() * weather.length)]
-                        "
-                      />
-                      <strong style="margin-left: 2px"
-                        >{{ Math.floor(Math.random() * 30) }}℃
-                      </strong>
-                    </div>
-                    <div>
-                      <font-awesome-icon
-                        icon="tint"
-                        style="margin-left: 5px; font-size: 0.8em"
-                      />
-                      {{ Math.floor(Math.random() * 120) + "мм." }}
-                      <span class="tag is-light" title="Гектары">{{
-                        Math.floor(Math.random() * 500) + " га."
-                      }}</span>
-                    </div>
-                  </div>
-                </a>
-                <div :class="{ 'cpi-hide cpi-box': !date.isOpen }">
-                  <CPI
-                    v-for="dataCpi in date.dataCPI"
-                    :key="dataCpi.Id"
-                    :clousedOperation="dataCpi.OrderId !== ''"
-                    :cpiData="dataCpi"
-                    @cpi-change="cpiChange"
-                  />
                 </div>
-              </div>
-            </article>
+
+                <div class="panel-block">
+                  <p class="control has-icons-left">
+                    <input
+                      class="input is-info is-small"
+                      type="text"
+                      placeholder="поиск..."
+                    />
+                    <span class="icon is-left">
+                      <font-awesome-icon icon="search" />
+                    </span>
+                  </p>
+                </div>
+
+                <div class="cpi-dates" v-for="date in cpi.dates" :key="date.id">
+                  <a
+                    class="panel-block"
+                    style="justify-content: space-between"
+                    @dblclick="date.isOpen = !date.isOpen"
+                  >
+                    <div style="padding: 0 0.2em; width: 30%">
+                      <div>
+                        <span>
+                          <font-awesome-icon icon="calendar-alt" />
+                          {{ date.date }}
+                        </span>
+                      </div>
+                      <font-awesome-icon icon="money-check-alt" />
+                      {{ Math.floor(Math.random() * 100000) + " р." }}
+                    </div>
+                    <div style="width: 30%">
+                      <button class="button is-small" title="Добавить">
+                        <font-awesome-icon icon="plus" />
+                      </button>
+                      <button class="button is-small" title="Создать пул">
+                        <font-awesome-icon icon="folder-plus" />
+                      </button>
+                      <button class="button is-small" title="Добавить отряд">
+                        <font-awesome-icon icon="user-friends" />
+                      </button>
+                      <button class="button is-small" title="Пересчет">
+                        <font-awesome-icon icon="calculator" />
+                      </button>
+                    </div>
+                    <div
+                      style="
+                        width: 40%;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      "
+                    >
+                      <div>
+                        <font-awesome-icon
+                          icon="users"
+                          size="xs"
+                          style="margin-left: 5px; font-size: 0.8em"
+                        />
+                        <span style="margin-left: 5px">{{
+                          Math.floor(Math.random() * 99)
+                        }}</span>
+                      </div>
+                      <div>
+                        <font-awesome-icon
+                          style="margin-left: 5px; font-size: 0.8em"
+                          :icon="
+                            weather[Math.floor(Math.random() * weather.length)]
+                          "
+                        />
+                        <strong style="margin-left: 2px"
+                          >{{ Math.floor(Math.random() * 30) }}℃
+                        </strong>
+                      </div>
+                      <div>
+                        <font-awesome-icon
+                          icon="tint"
+                          style="margin-left: 5px; font-size: 0.8em"
+                        />
+                        {{ Math.floor(Math.random() * 120) + "мм." }}
+                        <span class="tag is-light" title="Гектары">{{
+                          Math.floor(Math.random() * 500) + " га."
+                        }}</span>
+                      </div>
+                    </div>
+                  </a>
+                  <div :class="{ 'cpi-hide cpi-box': !date.isOpen }">
+                    <CPI
+                      v-for="dataCpi in date.dataCPI"
+                      :key="dataCpi.Id"
+                      :clousedOperation="dataCpi.OrderId !== ''"
+                      :cpiId="dataCpi.Id"
+                      @cpi-change="cpiChange"
+                    />
+                  </div>
+                </div>
+              </article>
+            </div>
           </div>
         </div>
       </div>
@@ -298,8 +300,25 @@ export default {
     this.getCPI();
   },
   methods: {
-    isTrueDate(date) {
-      return this.cpiDate.date === this.formatDate(date);
+    fieldIsEmpty(fields, dates) {
+      let result = [];
+      fields.forEach((fl) => {
+        dates.forEach((dt) => {
+          // eslint-disable-next-line prettier/prettier
+          const check = this.formatDate(dt.PlanDate) === this.formatDate(fl.PlanDate) ? false : true;
+          // console.log(
+          //   "fieldIsEmpty",
+          //   this.formatDate(dt.PlanDate),
+          //   this.formatDate(fl.PlanDate)
+          // );
+          result.push({
+            fieldID: fl.FieldId,
+            date: this.formatDate(dt.PlanDate),
+            isEmpty: !check,
+          });
+        });
+      });
+      return result;
     },
     getDateWithString(date) {
       const now = new Date(date);
@@ -324,8 +343,9 @@ export default {
       return operation.Description || "";
     },
     fieldName(id) {
-      const field = this.GET_STATE.FieldSet.find((el) => el.Id === id) || [];
-      return `${field.ProdDepId} ${field.Name}` || "";
+      const fieldSet = this.GET_STATE.FieldSet;
+      const result = fieldSet.find((el) => el.Id === id) || {};
+      return `${result.ProdDepId} ${result.Name}` || {};
     },
     cpiChange(callBack) {
       let fields = this.fields;
@@ -337,6 +357,7 @@ export default {
       this.fields = fields;
     },
     getUniqueListBy(arr, key) {
+      console.log(arr, key);
       return [...new Map(arr.map((item) => [item[key], item])).values()];
     },
     getDataCpi(fieldId) {
@@ -363,8 +384,6 @@ export default {
         fields.push(el.FieldId);
       });
 
-      console.log(_fields);
-
       // удаляем дубликаты культур (это и есть список операций)
       let _cultureId = this.getUniqueListBy(_fields, "CultureId");
 
@@ -375,65 +394,95 @@ export default {
       );
 
       _planDates.forEach((el) => {
-        let res = el.PlanDate.replace("/Date(", "").replace(")/", "");
-        let date = new Date(Number(res));
         // eslint-disable-next-line prettier/prettier
-        _dates.push(this.formatDate(date))
+        _dates.push(this.formatDate(el.PlanDate))
       });
+
+      // dates.forEach((dt) => {});
 
       _cultureId.forEach((el) => {
         const fields = [];
-        _fields.forEach((fl) => {
-          if (fl.Suboperation === el.Suboperation) fields.push(fl);
-        });
         const dates = [];
-        _planDates.forEach((dt) => {
-          if (dt.Suboperation === el.Suboperation) {
-            let res = dt.PlanDate.replace("/Date(", "").replace(")/", "");
-            let date = new Date(Number(res));
+        _fields.forEach((fl) => {
+          let dataField = {};
+          if (fl.Suboperation === el.Suboperation) {
+            const dataCpiAll = this.getDataCpi(fl.FieldId);
 
-            const dataCPI = [];
-            const dataCpiAll = this.getDataCpi(dt.FieldId);
-            dataCpiAll.forEach((dcpi) => {
-              if (dt.PlanDate === dcpi.PlanDate) dataCPI.push(dcpi);
+            _dates.forEach((ds) => {
+              const dataCPI = [];
+              dataCpiAll.forEach((dcpi) => {
+                if (ds === this.formatDate(dcpi.PlanDate)) dataCPI.push(dcpi);
+              });
+
+              dates.push({
+                // eslint-disable-next-line prettier/prettier
+                id: fl.Id,
+                date: ds,
+                dataCPI: dataCPINoDubles,
+                isOpen: false,
+              });
             });
 
-            dates.push({
-              id: `${Math.floor(Math.random() * 8956)}-${Math.floor(
-                Math.random() * 100000
-              )}-${Math.floor(Math.random() * 350)}`,
-              date: this.formatDate(date),
-              dataCPI: dataCPI,
-              isOpen: false,
-            });
+            const dataCPINoDubles = this.getUniqueListBy(dates, "id");
+
+            dataField.fieldId = fl.FieldId;
+            dataField.fieldData = fl;
+            dataField.fieldDates = dates;
+            fields.push(dataField);
           }
         });
+
+        // _planDates.forEach((dt) => {
+        //   if (dt.Suboperation === el.Suboperation) {
+        //     const dataCPI = [];
+        //     const dataCpiAll = this.getDataCpi(dt.FieldId);
+        //     dataCpiAll.forEach((dcpi) => {
+        //       if (dt.PlanDate === dcpi.PlanDate) dataCPI.push(dcpi);
+        //     });
+        //     dates.push({
+        //       // eslint-disable-next-line prettier/prettier
+        //       id: `${Math.floor(Math.random() * 8956)}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 350)}`,
+        //       date: this.formatDate(dt.PlanDate),
+        //       dataCPI: dataCPI,
+        //       isOpen: false,
+        //     });
+        //   }
+        // });
+
         CPI.push({
           id: el.Id,
           cultureId: el.CultureId,
           subId: el.Suboperation,
           fields: fields,
-          dates: dates,
           materialId: el.MaterialId,
           planDate: el.PlanDate,
           exempCord: [],
           CPI_change: {},
           isOpen: false,
           isOpenContent: false,
+          isOpenContField: false,
         });
       });
       this.CPI = CPI;
+
+      console.log("_fields", _fields);
+
       console.log(CPI);
+
       return CPI;
     },
     formatDate(date) {
-      let dd = date.getDate();
+      if (!date) return "";
+      let dateInit = date.replace("/Date(", "").replace(")/", "");
+      let resDate = new Date(Number(dateInit));
+
+      let dd = resDate.getDate();
       if (dd < 10) dd = "0" + dd;
 
-      let mm = date.getMonth() + 1;
+      let mm = resDate.getMonth() + 1;
       if (mm < 10) mm = "0" + mm;
 
-      let yy = date.getFullYear();
+      let yy = resDate.getFullYear();
 
       return dd + "." + mm + "." + yy;
     },
