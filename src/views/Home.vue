@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable prettier/prettier -->
   <div style="padding-top: 2em">
     <div class="map">
       <div
@@ -48,13 +49,13 @@
             style="padding: 0em"
             :class="{ 'content-hide': !cpi.isOpenContent }"
           >
-            <div v-for="field in cpi.fields" :key="field.Id">
+            <div v-for="field in cpi.fields" :key="field.fieldData.Id">
               <article class="panel" style="box-shadow: none">
-                <div class="panel-heading cpi-info" style="height: 2.5em">
+                <div class="panel-heading cpi-info">
                   <div>
-                    <span>{{ field.FieldId }}</span>
+                    <span>{{ field.fieldData.FieldId }}</span>
                     <p style="font-size: 0.7em; font-weight: 600">
-                      {{ fieldName(field.FieldId) }}
+                      {{ fieldName(field.fieldData.FieldId) }}
                     </p>
                   </div>
                   <div style="display: flex">
@@ -91,79 +92,18 @@
                     </span>
                   </p>
                 </div>
-
-                <div class="cpi-dates" v-for="date in cpi.dates" :key="date.id">
-                  <a
-                    class="panel-block"
-                    style="justify-content: space-between"
-                    @dblclick="date.isOpen = !date.isOpen"
-                  >
-                    <div style="padding: 0 0.2em; width: 30%">
-                      <div>
-                        <span>
-                          <font-awesome-icon icon="calendar-alt" />
-                          {{ date.date }}
-                        </span>
-                      </div>
-                      <font-awesome-icon icon="money-check-alt" />
-                      {{ Math.floor(Math.random() * 100000) + " р." }}
-                    </div>
-                    <div style="width: 30%">
-                      <button class="button is-small" title="Добавить">
-                        <font-awesome-icon icon="plus" />
-                      </button>
-                      <button class="button is-small" title="Создать пул">
-                        <font-awesome-icon icon="folder-plus" />
-                      </button>
-                      <button class="button is-small" title="Добавить отряд">
-                        <font-awesome-icon icon="user-friends" />
-                      </button>
-                      <button class="button is-small" title="Пересчет">
-                        <font-awesome-icon icon="calculator" />
-                      </button>
-                    </div>
-                    <div
-                      style="
-                        width: 40%;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                      "
-                    >
-                      <div>
-                        <font-awesome-icon
-                          icon="users"
-                          size="xs"
-                          style="margin-left: 5px; font-size: 0.8em"
-                        />
-                        <span style="margin-left: 5px">{{
-                          Math.floor(Math.random() * 99)
-                        }}</span>
-                      </div>
-                      <div>
-                        <font-awesome-icon
-                          style="margin-left: 5px; font-size: 0.8em"
-                          :icon="
-                            weather[Math.floor(Math.random() * weather.length)]
-                          "
-                        />
-                        <strong style="margin-left: 2px"
-                          >{{ Math.floor(Math.random() * 30) }}℃
-                        </strong>
-                      </div>
-                      <div>
-                        <font-awesome-icon
-                          icon="tint"
-                          style="margin-left: 5px; font-size: 0.8em"
-                        />
-                        {{ Math.floor(Math.random() * 120) + "мм." }}
-                        <span class="tag is-light" title="Гектары">{{
-                          Math.floor(Math.random() * 500) + " га."
-                        }}</span>
-                      </div>
-                    </div>
-                  </a>
-                  <div :class="{ 'cpi-hide cpi-box': !date.isOpen }">
+                
+                <DatesCpi 
+                  v-for="date in field.fieldDates"
+                  :key="date.id"
+                  :dates="date"
+                  :gt="Math.floor(Math.random() * 500)"
+                  :rain="Math.floor(Math.random() * 120)"
+                  :users="Math.floor(Math.random() * 99)"
+                  :temperature="Math.floor(Math.random() * 30)"
+                  :weatherIcon="weather[Math.floor(Math.random() * weather.length)]"
+                  @openDate="date.isOpen = !date.isOpen">
+                  <template v-slot:dropDownContent>
                     <CPI
                       v-for="dataCpi in date.dataCPI"
                       :key="dataCpi.Id"
@@ -171,8 +111,8 @@
                       :cpiId="dataCpi.Id"
                       @cpi-change="cpiChange"
                     />
-                  </div>
-                </div>
+                  </template>
+                </DatesCpi>
               </article>
             </div>
           </div>
@@ -277,23 +217,6 @@ export default {
         // "temperature-low",
         // "temperature-high",
       ],
-      dates: [
-        {
-          id: 1,
-          date: "2021.11.10",
-          isOpen: false,
-        },
-        {
-          id: 2,
-          date: "2021.11.11",
-          isOpen: false,
-        },
-        {
-          id: 3,
-          date: "2021.11.12",
-          isOpen: false,
-        },
-      ],
     };
   },
   created() {
@@ -306,11 +229,6 @@ export default {
         dates.forEach((dt) => {
           // eslint-disable-next-line prettier/prettier
           const check = this.formatDate(dt.PlanDate) === this.formatDate(fl.PlanDate) ? false : true;
-          // console.log(
-          //   "fieldIsEmpty",
-          //   this.formatDate(dt.PlanDate),
-          //   this.formatDate(fl.PlanDate)
-          // );
           result.push({
             fieldID: fl.FieldId,
             date: this.formatDate(dt.PlanDate),
@@ -319,18 +237,6 @@ export default {
         });
       });
       return result;
-    },
-    getDateWithString(date) {
-      const now = new Date(date);
-      let dd = now.getDate();
-      if (dd < 10) dd = "0" + dd;
-
-      let mm = now.getMonth() + 1;
-      if (mm < 10) mm = "0" + mm;
-
-      let yy = now.getFullYear();
-      if (yy < 10) yy = "0" + yy;
-      return dd + "." + mm + "." + yy;
     },
     cultureName(id) {
       const culture =
@@ -357,7 +263,6 @@ export default {
       this.fields = fields;
     },
     getUniqueListBy(arr, key) {
-      console.log(arr, key);
       return [...new Map(arr.map((item) => [item[key], item])).values()];
     },
     getDataCpi(fieldId) {
@@ -368,7 +273,7 @@ export default {
       const CPI = [];
       const operations = [];
       const fields = [];
-      const _dates = [];
+
       // получаем id операций
       let _operations = this.getUniqueListBy(
         this.CapacityPlanItemSet,
@@ -384,21 +289,8 @@ export default {
         fields.push(el.FieldId);
       });
 
-      // удаляем дубликаты культур (это и есть список операций)
+      // удаляем дубликаты культур (этот массив и будет списком операций)
       let _cultureId = this.getUniqueListBy(_fields, "CultureId");
-
-      // получаем используемые даты
-      let _planDates = this.getUniqueListBy(
-        this.CapacityPlanItemSet,
-        "PlanDate"
-      );
-
-      _planDates.forEach((el) => {
-        // eslint-disable-next-line prettier/prettier
-        _dates.push(this.formatDate(el.PlanDate))
-      });
-
-      // dates.forEach((dt) => {});
 
       _cultureId.forEach((el) => {
         const fields = [];
@@ -406,24 +298,32 @@ export default {
         _fields.forEach((fl) => {
           let dataField = {};
           if (fl.Suboperation === el.Suboperation) {
-            const dataCpiAll = this.getDataCpi(fl.FieldId);
-
-            _dates.forEach((ds) => {
-              const dataCPI = [];
-              dataCpiAll.forEach((dcpi) => {
-                if (ds === this.formatDate(dcpi.PlanDate)) dataCPI.push(dcpi);
+            const allDataCpiForFields = this.getDataCpi(fl.FieldId);
+            const dataCPI = [];
+            const _datesStr = [];
+            this.getUniqueListBy(allDataCpiForFields, "PlanDate").forEach(
+              (alldatesstr) => {
+                _datesStr.push(this.formatDate(alldatesstr.PlanDate));
+              }
+            );
+            _datesStr.forEach((dstr) => {
+              allDataCpiForFields.forEach((allCpi) => {
+                // eslint-disable-next-line prettier/prettier
+                if (dstr === this.formatDate(allCpi.PlanDate)) {
+                  dataCPI.push(allCpi);
+                }
               });
-
+            });
+            _datesStr.forEach((dstr) => {
               dates.push({
                 // eslint-disable-next-line prettier/prettier
-                id: fl.Id,
-                date: ds,
-                dataCPI: dataCPINoDubles,
+                id: `${Math.floor(Math.random() * 8956)}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 350)}`,
+                date: dstr,
+                // eslint-disable-next-line prettier/prettier
+                dataCPI: dataCPI.filter(el => dstr === this.formatDate(el.PlanDate) && el.FieldId === fl.FieldId),
                 isOpen: false,
               });
             });
-
-            const dataCPINoDubles = this.getUniqueListBy(dates, "id");
 
             dataField.fieldId = fl.FieldId;
             dataField.fieldData = fl;
@@ -431,23 +331,6 @@ export default {
             fields.push(dataField);
           }
         });
-
-        // _planDates.forEach((dt) => {
-        //   if (dt.Suboperation === el.Suboperation) {
-        //     const dataCPI = [];
-        //     const dataCpiAll = this.getDataCpi(dt.FieldId);
-        //     dataCpiAll.forEach((dcpi) => {
-        //       if (dt.PlanDate === dcpi.PlanDate) dataCPI.push(dcpi);
-        //     });
-        //     dates.push({
-        //       // eslint-disable-next-line prettier/prettier
-        //       id: `${Math.floor(Math.random() * 8956)}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 350)}`,
-        //       date: this.formatDate(dt.PlanDate),
-        //       dataCPI: dataCPI,
-        //       isOpen: false,
-        //     });
-        //   }
-        // });
 
         CPI.push({
           id: el.Id,
@@ -464,11 +347,7 @@ export default {
         });
       });
       this.CPI = CPI;
-
-      console.log("_fields", _fields);
-
       console.log(CPI);
-
       return CPI;
     },
     formatDate(date) {
