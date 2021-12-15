@@ -9,6 +9,8 @@ import FontAwesomeIcon from "./utilities/icons.js";
 
 const app = createApp(App);
 
+app.config.warnHandler = () => {};
+
 app.component("font-awesome-icon", FontAwesomeIcon);
 
 regComponents.forEach((comp) => {

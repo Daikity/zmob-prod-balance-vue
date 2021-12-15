@@ -1,11 +1,8 @@
 <template>
   <div class="cpi-dates">
-    <a
-      class="panel-block"
-      style="justify-content: space-between"
-      @dblclick="$emit('openDate')"
-    >
-      <div style="padding: 0 0.2em; width: 30%">
+    <!-- eslint-disable-next-line prettier/prettier -->
+    <a class="panel-block date-template" @dblclick="$emit('openDropDownContent')">
+      <div class="date-template-slots">
         <div>
           <span>
             <font-awesome-icon icon="calendar-alt" />
@@ -16,7 +13,7 @@
         {{ Math.floor(Math.random() * 100000) + " р." }}
       </div>
       <slot name="controls">
-        <div style="width: 30%">
+        <div class="date-template-slots">
           <button class="button is-small" title="Добавить">
             <font-awesome-icon icon="plus" />
           </button>
@@ -32,37 +29,32 @@
         </div>
       </slot>
       <slot name="supportingInfo">
-        <div
-          style="
-            width: 40%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          "
-        >
-          <div v-if="users">
-            <font-awesome-icon
-              icon="users"
-              size="xs"
-              style="margin-left: 5px; font-size: 0.8em"
-            />
-            <span style="margin-left: 5px">{{ users }}</span>
-          </div>
-          <div v-if="temperature && weatherIcon">
-            <font-awesome-icon
-              style="margin-left: 5px; font-size: 0.8em"
-              :icon="weatherIcon"
-            />
-            <strong style="margin-left: 2px">{{ temperature }}℃ </strong>
-          </div>
-          <div v-if="rain">
-            <!-- eslint-disable-next-line prettier/prettier -->
+        <div class="date-template-slots">
+          <div class="supportingInfo-items-data">
+            <div class="item-data" v-if="users">
+              <font-awesome-icon
+                icon="users"
+                size="xs"
+                style="margin-left: 5px; font-size: 0.8em"
+              />
+              <span style="margin-left: 5px">{{ users }}</span>
+            </div>
+            <div class="item-data" v-if="temperature && weatherIcon">
+              <font-awesome-icon
+                style="margin-left: 5px; font-size: 0.8em"
+                :icon="weatherIcon"
+              />
+              <strong style="margin-left: 2px">{{ temperature }}℃ </strong>
+            </div>
+            <div class="item-data" v-if="rain">
+              <!-- eslint-disable-next-line prettier/prettier -->
           <font-awesome-icon icon="tint" style="margin-left: 5px; font-size: 0.8em" />
-            {{ rain + "мм." }}
+              {{ rain + "мм." }}
+            </div>
           </div>
-          <div v-if="gt">
-            <span class="tag is-light" title="Гектары">{{ gt }} га.</span>
-          </div>
+        </div>
+        <div v-if="gt">
+          <span class="tag is-light" title="Гектары">{{ gt }} га.</span>
         </div>
       </slot>
     </a>
@@ -91,6 +83,20 @@ export default {
 </script>
 
 <style>
+.date-template {
+  justify-content: space-between;
+}
+.date-template-slots {
+  width: 33.3333%;
+}
+.date-template-slots:first-child {
+  justify-content: flex-start;
+}
+.supportingInfo-items-data {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
 .cpi-dates {
   border-bottom: 1px solid #ededed;
 }

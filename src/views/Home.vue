@@ -85,6 +85,7 @@
                     <input
                       class="input is-info is-small"
                       type="text"
+                      v-model="field.search"
                       placeholder="поиск..."
                     />
                     <span class="icon is-left">
@@ -92,27 +93,27 @@
                     </span>
                   </p>
                 </div>
-                
-                <DatesCpi 
-                  v-for="date in field.fieldDates"
-                  :key="date.id"
-                  :dates="date"
-                  :gt="Math.floor(Math.random() * 500)"
-                  :rain="Math.floor(Math.random() * 120)"
-                  :users="Math.floor(Math.random() * 99)"
-                  :temperature="Math.floor(Math.random() * 30)"
-                  :weatherIcon="weather[Math.floor(Math.random() * weather.length)]"
-                  @openDate="date.isOpen = !date.isOpen">
-                  <template v-slot:dropDownContent>
-                    <CPI
-                      v-for="dataCpi in date.dataCPI"
-                      :key="dataCpi.Id"
-                      :clousedOperation="dataCpi.OrderId !== ''"
-                      :cpiId="dataCpi.Id"
-                      @cpi-change="cpiChange"
-                    />
-                  </template>
-                </DatesCpi>
+                <div v-for="date in field.fieldDates" :key="date.id">
+                  <DatesCpi 
+                    v-if="filterData(field.search, date.dataCPI).length > 0"
+                    :dates="date"
+                    :gt="Math.floor(Math.random() * 500)"
+                    :rain="Math.floor(Math.random() * 120)"
+                    :users="Math.floor(Math.random() * 99)"
+                    :temperature="Math.floor(Math.random() * 30)"
+                    :weatherIcon="weather[Math.floor(Math.random() * weather.length)]"
+                    @openDropDownContent="date.isOpen = !date.isOpen">
+                    <template v-slot:dropDownContent>
+                      <CPI
+                        v-for="dataCpi in filterData(field.search, date.dataCPI)"
+                        :key="dataCpi.Id"
+                        :clousedOperation="dataCpi.OrderId !== ''"
+                        :cpiId="dataCpi.Id"
+                        @cpi-change="cpiChange"
+                      />
+                    </template>
+                  </DatesCpi>
+                </div>
               </article>
             </div>
           </div>
@@ -121,79 +122,7 @@
     </div>
   </div>
 </template>
-<style scoped>
-.cpi-dates {
-  border-bottom: 1px solid #ededed;
-}
-.cpi-info {
-  border-radius: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.cpi-info span {
-  cursor: pointer;
-}
-.map {
-  position: absolute;
-  left: 0;
-  top: 2em;
-  z-index: 910;
-  min-width: 10em;
-}
-.map-box {
-  position: absolute;
-  width: 50em;
-  min-width: 10em;
-  min-height: 4em;
-  padding: 0.25em;
-  box-shadow: 5px 5px 13px 0px #0000001f;
-  margin-top: 2.5em;
-  margin-left: 1em;
-  border-radius: 5px;
-}
-.box-cpi {
-  max-height: 20em;
-  overflow-y: auto;
-}
-.cpi-hide,
-.map-hide,
-.content-hide {
-  display: none;
-}
-.cpi-field,
-.map-btn {
-  padding: 0.5em 0.7em;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-}
-.map-btn {
-  position: absolute;
-  z-index: 10;
-  left: 10px;
-  top: 10px;
-  border: 1px solid rgb(236, 236, 236);
-  background-color: #fff;
-}
-.cpi-field:hover,
-.map-btn:hover {
-  background-color: rgb(230, 230, 230);
-  border: 1px solid rgb(230, 230, 230);
-}
-.cpi-box {
-  position: absolute;
-}
-.is-open {
-  background-color: #00d1b2;
-  border: 1px solid #00bb9f;
-  color: #fff;
-}
-.is-open:hover {
-  background-color: #00bb9f;
-  border: 1px solid #00bb9f;
-}
-</style>
+
 <script>
 import { mapGetters } from "vuex";
 
@@ -269,7 +198,10 @@ export default {
       const CPIset = this.CapacityPlanItemSet;
       return CPIset.filter((e) => e.FieldId === fieldId);
     },
+    getOperation() {},
     getCPI() {
+      // сервер выгружает весь CPI и его нужно сформировать для дальнеёшей обработки
+      // приходится извращаться
       const CPI = [];
       const operations = [];
       const fields = [];
@@ -309,7 +241,7 @@ export default {
             _datesStr.forEach((dstr) => {
               allDataCpiForFields.forEach((allCpi) => {
                 // eslint-disable-next-line prettier/prettier
-                if (dstr === this.formatDate(allCpi.PlanDate)) {
+                if (dstr === this.formatDate(allCpi.PlanDate) && allCpi.FieldId === fl.FieldId) {
                   dataCPI.push(allCpi);
                 }
               });
@@ -327,7 +259,8 @@ export default {
 
             dataField.fieldId = fl.FieldId;
             dataField.fieldData = fl;
-            dataField.fieldDates = dates;
+            dataField.fieldDates = this.getUniqueListBy(dates, "date");
+            dataField.search = "";
             fields.push(dataField);
           }
         });
@@ -348,7 +281,6 @@ export default {
       });
       this.CPI = CPI;
       console.log(CPI);
-      return CPI;
     },
     formatDate(date) {
       if (!date) return "";
@@ -364,6 +296,15 @@ export default {
       let yy = resDate.getFullYear();
 
       return dd + "." + mm + "." + yy;
+    },
+    filterData(triger, object) {
+      return object.filter((itm) => {
+        for (const key in itm) {
+          if (String(itm[key]).indexOf(triger) !== -1) {
+            return itm;
+          }
+        }
+      });
     },
   },
   watch: {
@@ -382,3 +323,77 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.cpi-dates {
+  border-bottom: 1px solid #ededed;
+}
+.cpi-info {
+  border-radius: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cpi-info span {
+  cursor: pointer;
+}
+.map {
+  position: absolute;
+  left: 0;
+  top: 2em;
+  z-index: 910;
+  min-width: 10em;
+}
+.map-box {
+  position: absolute;
+  width: 50em;
+  min-width: 10em;
+  min-height: 4em;
+  padding: 0.25em;
+  box-shadow: 5px 5px 13px 0px #0000001f;
+  margin-top: 2.5em;
+  margin-left: 1em;
+  border-radius: 5px;
+}
+.box-cpi {
+  max-height: 20em;
+  overflow-y: auto;
+}
+.cpi-hide,
+.map-hide,
+.content-hide {
+  display: none;
+}
+.cpi-field,
+.map-btn {
+  padding: 0.5em 0.7em;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+}
+.map-btn {
+  position: absolute;
+  z-index: 10;
+  left: 10px;
+  top: 10px;
+  border: 1px solid rgb(236, 236, 236);
+  background-color: #fff;
+}
+.cpi-field:hover,
+.map-btn:hover {
+  background-color: rgb(230, 230, 230);
+  border: 1px solid rgb(230, 230, 230);
+}
+.cpi-box {
+  position: absolute;
+}
+.is-open {
+  background-color: #00d1b2;
+  border: 1px solid #00bb9f;
+  color: #fff;
+}
+.is-open:hover {
+  background-color: #00bb9f;
+  border: 1px solid #00bb9f;
+}
+</style>

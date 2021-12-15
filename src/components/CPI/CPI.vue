@@ -30,19 +30,19 @@
           </button>
         </div>
         <div v-else @dblclick="edit(getDataCpi(cpiId), 'tractor')">
-          <span
-            class="tag is-success"
-            :class="
-              getDataCpi(cpiId).OrderId ? 'is-assigned' : 'is-not-assigned'
-            "
-          >
-            {{ getDataCpi(cpiId).OrderId }}
-          </span>
           <div class="info">
+            <span
+              class="tag is-success"
+              :class="
+                getDataCpi(cpiId).OrderId ? 'is-assigned' : 'is-not-assigned'
+              "
+            >
+              {{ getDataCpi(cpiId).OrderId }}
+            </span>
             <p class="title is-7">
               {{ getMashin(getDataCpi(cpiId).TractorId).Eqktx }}
             </p>
-            <p class="subtitle is-7">{{ getDataCpi(cpiId).TractorId }}</p>
+            <p class="subtitle is-7">{{ getDataCpi(cpiId).Invnr }}</p>
           </div>
         </div>
       </div>
@@ -123,40 +123,49 @@
             <p class="subtitle is-7">{{ getDataCpi(cpiId).DriverId }}</p>
           </div>
         </div>
-        <div>
-          <font-awesome-icon
-            style="color: orange"
-            title="Дневная смена"
-            size="s"
-            icon="sun"
-            v-if="Math.floor(Math.random() * 3) > 1"
-          />
-          <font-awesome-icon
-            style="color: #004797"
-            size="s"
-            icon="moon"
-            v-else
-            title="Ночная смена"
-          />
-          <button class="button is-small" style="margin-left: 0.5em">
-            <font-awesome-icon icon="trash" />
-          </button>
-        </div>
       </div>
+    </div>
+    <div class="cpi-control">
+      <font-awesome-icon
+        style="color: orange"
+        title="Дневная смена"
+        size="s"
+        icon="sun"
+        v-if="Math.floor(Math.random() * 3) > 1"
+      />
+      <font-awesome-icon
+        style="color: #004797"
+        size="s"
+        icon="moon"
+        v-else
+        title="Ночная смена"
+      />
+      <button class="button is-small" style="margin-left: 0.5em">
+        <font-awesome-icon icon="trash" />
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
+.cpi-control {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
 .mashin-info-block {
   padding: 0.3em 0.5em;
   border-bottom: 1px solid #ededed;
 }
 .mashin-info-assigned {
   border-left: 3px solid #00ce52;
+  display: flex;
+  justify-content: space-between;
 }
 .mashin-info-not-assigned {
   border-left: 3px solid #ff5241;
+  display: flex;
+  justify-content: space-between;
 }
 .mashin-info-block:hover {
   background-color: #fdfdfd;
@@ -164,6 +173,7 @@
 .mashin-content {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 .is-assigned {
   font-size: 0.6em;
@@ -176,14 +186,14 @@
 .mashin-info {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  width: 25%;
+  justify-content: center;
+  width: 33.333%;
   padding: 0.2em;
   cursor: pointer;
 }
-.mashin-info:last-child {
-  width: 50%;
-  justify-content: space-between;
+.mashin-info:last-child,
+.mashin-info:first-child {
+  justify-content: flex-start;
 }
 .mashin-info > * {
   display: flex;
