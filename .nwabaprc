@@ -1,0 +1,13 @@
+{
+    "base": "./dist",
+    "conn_server": "http://srvsap83.rainvest.local:8000",
+    "conn_user": "FIORI",
+    "abap_transport": "FE1K900374",
+    "conn_password": "Init00001",
+    "conn_client": "100",
+    "abap_language": "RU",
+    "abap_package": "ZMOB004_20",
+    "abap_bsp": "ZMOB004_CPI",
+    "abap_bsp_text": "Балансировка СХ техники VUE",
+    "calcappindex": true
+}

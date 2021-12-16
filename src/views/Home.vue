@@ -152,21 +152,6 @@ export default {
     this.getCPI();
   },
   methods: {
-    fieldIsEmpty(fields, dates) {
-      let result = [];
-      fields.forEach((fl) => {
-        dates.forEach((dt) => {
-          // eslint-disable-next-line prettier/prettier
-          const check = this.formatDate(dt.PlanDate) === this.formatDate(fl.PlanDate) ? false : true;
-          result.push({
-            fieldID: fl.FieldId,
-            date: this.formatDate(dt.PlanDate),
-            isEmpty: !check,
-          });
-        });
-      });
-      return result;
-    },
     cultureName(id) {
       const culture =
         this.GET_STATE.CultureSet.find((el) => el.Id === id) || [];
@@ -191,9 +176,6 @@ export default {
       field.CPI_change = callBack;
       this.fields = fields;
     },
-    getUniqueListBy(arr, key) {
-      return [...new Map(arr.map((item) => [item[key], item])).values()];
-    },
     getDataCpi(fieldId) {
       const CPIset = this.CapacityPlanItemSet;
       return CPIset.filter((e) => e.FieldId === fieldId);
@@ -207,7 +189,7 @@ export default {
       const fields = [];
 
       // получаем id операций
-      let _operations = this.getUniqueListBy(
+      let _operations = this.baceControls.getUniqueListBy(
         this.CapacityPlanItemSet,
         "OperationId"
       );
@@ -216,13 +198,16 @@ export default {
       });
 
       // удаляем дубликаты полей
-      let _fields = this.getUniqueListBy(this.CapacityPlanItemSet, "FieldId");
+      let _fields = this.baceControls.getUniqueListBy(
+        this.CapacityPlanItemSet,
+        "FieldId"
+      );
       _fields.forEach((el) => {
         fields.push(el.FieldId);
       });
 
       // удаляем дубликаты культур (этот массив и будет списком операций)
-      let _cultureId = this.getUniqueListBy(_fields, "CultureId");
+      let _cultureId = this.baceControls.getUniqueListBy(_fields, "CultureId");
 
       _cultureId.forEach((el) => {
         const fields = [];
@@ -233,11 +218,11 @@ export default {
             const allDataCpiForFields = this.getDataCpi(fl.FieldId);
             const dataCPI = [];
             const _datesStr = [];
-            this.getUniqueListBy(allDataCpiForFields, "PlanDate").forEach(
-              (alldatesstr) => {
+            this.GET_STATE.baceControls
+              .getUniqueListBy(allDataCpiForFields, "PlanDate")
+              .forEach((alldatesstr) => {
                 _datesStr.push(this.formatDate(alldatesstr.PlanDate));
-              }
-            );
+              });
             _datesStr.forEach((dstr) => {
               allDataCpiForFields.forEach((allCpi) => {
                 // eslint-disable-next-line prettier/prettier
@@ -259,7 +244,10 @@ export default {
 
             dataField.fieldId = fl.FieldId;
             dataField.fieldData = fl;
-            dataField.fieldDates = this.getUniqueListBy(dates, "date");
+            dataField.fieldDates = this.GET_STATE.baceControls.getUniqueListBy(
+              dates,
+              "date"
+            );
             dataField.search = "";
             fields.push(dataField);
           }
@@ -319,7 +307,7 @@ export default {
     CapacityPlanItemSet() {
       return this.GET_STATE.CapacityPlanItemSet || [];
     },
-    ...mapGetters(["GET_STATE"]),
+    ...mapGetters(["GET_STATE", "baceControls"]),
   },
 };
 </script>

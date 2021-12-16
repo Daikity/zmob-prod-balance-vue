@@ -2,14 +2,23 @@ import { createStore } from "vuex";
 import axios from "axios";
 import geodata from "./geodata.js";
 import convert from "xml-js";
+import baceControls from "../utilities/basecontrols.js";
 
 export default createStore({
   state: {
     geo: geodata,
+    baceControls: {
+      ...baceControls,
+    },
+    OperationSet: [],
+    FieldSet: [],
   },
   getters: {
     GET_STATE(state) {
       return state;
+    },
+    baceControls(state) {
+      return state.baceControls;
     },
   },
   mutations: {

@@ -6,7 +6,9 @@
     "serve": "vue-cli-service serve --fix",
     "build": "vue-cli-service build --fix",
     "lint": "vue-cli-service lint --fix",
-    "back": "node backend/index.js"
+    "back": "node backend/index.js",
+    "test:unit": "vue-cli-service test:unit",
+    "deploy": "vue-cli-service lint --fix && vue-cli-service build --fix && nwabap upload"
   },
   "dependencies": {
     "@fawmi/vue-google-maps": "^0.9.4",
@@ -24,6 +26,7 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
+    "nwabap-ui5uploader": "^0.3.4",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",

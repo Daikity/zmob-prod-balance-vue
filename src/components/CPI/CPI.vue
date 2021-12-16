@@ -40,7 +40,7 @@
               {{ getDataCpi(cpiId).OrderId }}
             </span>
             <p class="title is-7">
-              {{ getMashin(getDataCpi(cpiId).TractorId).Eqktx }}
+              {{ getMashin(getDataCpi(cpiId).TractorId) }}
             </p>
             <p class="subtitle is-7">{{ getDataCpi(cpiId).Invnr }}</p>
           </div>
@@ -75,7 +75,7 @@
           v-if="getDataCpi(cpiId).TrailerId !== ''"
         >
           <p class="title is-7">
-            {{ getMashin(getDataCpi(cpiId).TrailerId).Eqktx }}
+            {{ getMashin(getDataCpi(cpiId).TrailerId) }}
           </p>
           <p class="subtitle is-7">{{ getDataCpi(cpiId).TrailerId }}</p>
         </div>
@@ -118,7 +118,7 @@
           <font-awesome-icon size="s" icon="male" />
           <div class="info" @dblclick="edit(getDataCpi(cpiId), 'driver')">
             <p class="title is-7">
-              {{ getEmploee(getDataCpi(cpiId).DriverId).Ename }}
+              {{ getEmploee(getDataCpi(cpiId).DriverId) }}
             </p>
             <p class="subtitle is-7">{{ getDataCpi(cpiId).DriverId }}</p>
           </div>
@@ -244,12 +244,16 @@ export default {
     },
     getEmploee(id) {
       const employeeSet = this.GET_STATE.EmployeeSet;
-      const result = employeeSet ? employeeSet.find((el) => el.Id === id) : {};
+      const result = employeeSet
+        ? employeeSet.find((el) => el.Id === id)
+        : { Ename: "" };
       return result;
     },
     getMashin(id) {
       const machineSet = this.GET_STATE.MachineSet;
-      const result = machineSet ? machineSet.find((el) => el.Id === id) : {};
+      const result = machineSet
+        ? machineSet.find((el) => el.Id === id)
+        : { Eqktx: "" };
       return result;
     },
     hendelRow(id) {

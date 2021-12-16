@@ -9,7 +9,9 @@
     </div>
     <div class="navbar-menu">
       <div class="navbar-start">
-        <h1 class="navbar-item">{{ headTitel }}</h1>
+        <h1 class="navbar-item">
+          {{ `rpegiontName / prodAreaName / prodDepartment` }}
+        </h1>
       </div>
       <div class="navbar-end">
         <h3 class="navbar-item">Лысогор Дмитрий Вадимович</h3>
@@ -124,18 +126,17 @@
 </style>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   components: {},
   data() {
     return {
       dropDownShow: false,
-
-      rpegion: this.getCookie("rpegion"),
-      prodArea: this.getCookie("prodArea"),
-      prodDepartment: this.getCookie("prodDepartment"),
-
-      headTitel: "Приморье / ПрА ПО Степнянское / Воздвиженка",
-
+      prodDepartment:
+        this.$store.getters.GET_STATE.baceControls.getCookie("prodDepartment"),
+      rpegion: this.$store.getters.GET_STATE.baceControls.getCookie("rpegion"),
+      prodArea:
+        this.$store.getters.GET_STATE.baceControls.getCookie("prodArea"),
       regionSet: this.$store.getters.GET_STATE.RegionSet,
       prodDepartmentSet: this.$store.getters.GET_STATE.ProdDepartmentSet,
       prodAreaSet: this.$store.getters.GET_STATE.ProdAreaSet,
@@ -169,6 +170,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(["GET_STATE"]),
     rangeToISOString() {
       return {
         start: new Date(this.range.start).toISOString().split("Z")[0],
@@ -261,17 +263,6 @@ export default {
           $filter: `(PlanTs ge datetime'${this.rangeToISOString.start}' and PlanTs le datetime'${this.rangeToISOString.end}') and RegionId eq '${this.rpegion}' and ProdDepId eq '${this.prodDepartment}'`,
         },
       });
-    },
-    getCookie(name) {
-      let matches = document.cookie.match(
-        new RegExp(
-          "(?:^|; )" +
-            // eslint-disable-next-line no-useless-escape
-            name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
-            "=([^;]*)"
-        )
-      );
-      return matches ? decodeURIComponent(matches[1]) : undefined;
     },
     initDataSoures() {
       this.backend.forEach((query) => {
