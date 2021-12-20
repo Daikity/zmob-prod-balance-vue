@@ -10,7 +10,7 @@ module.exports = {
       ],
     },
   },
-  publicPath: "/sap/bc/ui5_ui5/sap/zmob004_cpi_vue/",
+  publicPath: "/sap/bc/bsp/sap/zmob004_cpi_vue/",
   lintOnSave: true,
   css: {
     // Enable CSS source maps.
