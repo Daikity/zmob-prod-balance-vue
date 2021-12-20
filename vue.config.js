@@ -1,4 +1,21 @@
 module.exports = {
+  configureWebpack: {
+    module: {
+      rules: [
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: "javascript/auto",
+        },
+      ],
+    },
+  },
+  publicPath: "/sap/bc/ui5_ui5/sap/zmob004_cpi_vue/",
+  lintOnSave: true,
+  css: {
+    // Enable CSS source maps.
+    sourceMap: process.env.NODE_ENV !== "production",
+  },
   devServer: {
     proxy: {
       "^/": {
